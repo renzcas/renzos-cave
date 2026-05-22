@@ -1,0 +1,97 @@
+.cockpit-container {
+  padding: 20px;
+  color: #eee;
+  font-family: monospace;
+}
+
+.cockpit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.xp-box {
+  background: #111;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #222;
+  border-radius: 5px;
+  margin: 10px 0 20px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #00ff99;
+  transition: width 0.3s ease;
+}
+
+.track-selector button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  background: #222;
+  border: 1px solid #444;
+  color: #eee;
+  cursor: pointer;
+}
+
+.track-selector .active {
+  background: #00ff99;
+  color: #000;
+}
+
+.module-list {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.module-card {
+  background: #111;
+  padding: 15px;
+  border: 1px solid #333;
+  cursor: pointer;
+  width: 200px;
+}
+
+.module-card.active {
+  border-color: #00ff99;
+}
+
+.lesson-viewer {
+  margin-top: 20px;
+}
+
+.lesson-card {
+  background: #111;
+  padding: 15px;
+  border: 1px solid #333;
+  margin-bottom: 10px;
+}
+
+.lesson-card button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #00ff99;
+  border: none;
+  cursor: pointer;
+}
+
+.xp-actions {
+  margin-top: 20px;
+}
+
+.xp-actions button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  background: #333;
+  border: 1px solid #555;
+  color: #eee;
+  cursor: pointer;
+}

@@ -1,0 +1,9 @@
+[submodule "InfoPhyzx"]
+	path = InfoPhyzx
+	url = https://github.com/renzcas/InfoPhyzx
+[submodule "LLM_Organism"]
+	path = LLM_Organism
+	url = https://github.com/renzcas/LLM_Organism
+[submodule "CyberArena"]
+	path = CyberArena
+	url = https://github.com/renzcas/cyber-arena

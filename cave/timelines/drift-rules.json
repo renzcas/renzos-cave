@@ -1,0 +1,5 @@
+{
+  "defaultDrift": 0.0,
+  "maxDrift": 1.0,
+  "couplingFactor": 0.5
+}
