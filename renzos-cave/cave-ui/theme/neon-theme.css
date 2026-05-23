@@ -1,0 +1,78 @@
+/* === GLOBAL === */
+body {
+  background: #05050a;
+  color: #d8d8ff;
+  font-family: "JetBrains Mono", monospace;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* === PANEL WRAPPER === */
+.panel-wrapper {
+  background: #0d0d16;
+  border: 1px solid #1a1a2b;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 0 12px #00000088;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.panel-wrapper:hover {
+  border-color: #6f4aff;
+  box-shadow: 0 0 18px #6f4aff55;
+}
+
+/* === PANEL HEADERS === */
+.panel h2 {
+  margin-top: 0;
+  color: #b79cff;
+  text-shadow: 0 0 6px #6f4affaa;
+  font-size: 1.2rem;
+}
+
+/* === TEXT === */
+.panel strong {
+  color: #cfcfff;
+}
+
+.panel div {
+  margin-bottom: 4px;
+}
+
+/* === REGION MAP === */
+.region-block {
+  padding: 8px;
+  border: 1px solid #22223a;
+  border-radius: 6px;
+  background: #0f0f1c;
+  margin-bottom: 10px;
+}
+
+.adjacent-region {
+  padding: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #1c1c2f;
+  border-radius: 4px;
+  background: #0b0b14;
+}
+
+/* === NEON GLOW UTILITY === */
+.neon-glow {
+  color: #a88bff;
+  text-shadow: 0 0 8px #6f4aff, 0 0 16px #6f4aff55;
+}
+
+/* === SCROLLBARS === */
+.panel-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-wrapper::-webkit-scrollbar-thumb {
+  background: #2a2a44;
+  border-radius: 4px;
+}
+
+.panel-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #6f4aff;
+}
