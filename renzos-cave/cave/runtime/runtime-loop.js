@@ -1,58 +1,109 @@
-// cave/runtime/runtime-loop.js
+// runtime-loop.js
+// Unified Cave Engine Runtime Loop (HUD + Panels + Engines)
 
 import { stateBus } from "./state-bus.js";
 
-// === ENGINES ===
-import { beastEngine } from "../engines/beast-engine.js";
-import { trialEngine } from "../engines/trial-engine.js";
-import { bugbotEngine } from "../engines/bugbot-engine.js";
-import { arenaEngine } from "../engines/arena-engine.js";
-import { waveEngine } from "../engines/wave-engine.js";
-import { fusionEngine } from "../engines/fusion-engine.js";
-import { socketEngine } from "../engines/socket-engine.js";
-import { skillEngine } from "../engines/skill-engine.js";
-import { regionEventEngine } from "../engines/region-event-engine.js";
-import { boughEffects } from "../engines/bough-effects.js";
+// Engines
+import { computeMetabolicSchedule } from "../../engine/metabolic-scheduler.js";
+import { computeBoughEntropy } from "../../engine/bough-engine.js";
+import { computeComplexity } from "../../engine/complexity-tensor-organ.js";
+import { computeFreeEnergy } from "../../engine/free-energy-organ.js";
+import { computeReflexState } from "../../engine/organ-reflex-system.js";
+import { computeSymbolicOps } from "../../engine/symbolic-vm.js";
+import { computeNeuralFlow } from "../../engine/neural-spine.js";
 
-// === DATA ===
-import { beastRegistry } from "../data/beasts.js";
-import { trialRegistry } from "../data/trials.js";
-import { bugbots } from "../data/bugbots.js";
-import { arenaWaves } from "../data/arena-waves.js";
-import { fusionRecipes } from "../data/fusion-recipes.js";
-import { goldenBough } from "../data/golden-bough.js";
-import { regions } from "../data/regions.js";
-import { organs } from "../data/organs.js";
+// Tick rate
+const TARGET_FPS = 60;
+const FRAME_TIME = 1000 / TARGET_FPS;
 
-let lastTick = performance.now();
-const TICK_RATE = 100; // 10 ticks per second
+let lastTime = performance.now();
+let uiRef = null;
 
-function tick() {
-  const now = performance.now();
-  const delta = now - lastTick;
+export function startRuntimeLoop(engine, ui) {
+  uiRef = ui;
 
-  if (delta >= TICK_RATE) {
-    lastTick = now;
+  function tick(now) {
+    const delta = now - lastTime;
+    if (delta >= FRAME_TIME) {
+      lastTime = now;
 
-    // === RUN ALL ENGINES ===
-    beastEngine(stateBus, beastRegistry);
-    trialEngine(stateBus, trialRegistry);
-    bugbotEngine(stateBus, bugbots);
-    arenaEngine(stateBus);
-    waveEngine(stateBus, arenaWaves, beastRegistry);
-    fusionEngine(stateBus, organs, fusionRecipes);
-    socketEngine(stateBus);
-    skillEngine(stateBus);
-    regionEventEngine(stateBus, regions);
-    boughEffects(stateBus, goldenBough);
+      const signals = collectSignals(engine, delta);
 
-    // === NOTIFY UI ===
-    stateBus.append("runtimeUpdate", {});
+      // Update cockpit HUD
+      if (uiRef) uiRef.update(signals);
+
+      // Update panel system
+      stateBus.emit("tick", signals);
+    }
+
+    requestAnimationFrame(tick);
   }
 
   requestAnimationFrame(tick);
 }
 
-export function startRuntimeLoop() {
-  requestAnimationFrame(tick);
+// ---------------- SIGNAL COLLECTION ----------------
+
+function collectSignals(engine, delta) {
+  // Base signals from engine (user-defined)
+  const base = engine?.collectSignals?.() ?? {};
+
+  // Metabolic scheduler
+  const schedule = computeMetabolicSchedule(stateBus);
+
+  // Bough entropy
+  const entropy = computeBoughEntropy(stateBus);
+
+  // Complexity tensor
+  const complexity = computeComplexity(stateBus);
+
+  // Free energy
+  const freeEnergy = computeFreeEnergy(stateBus);
+
+  // Reflex system
+  const reflex = computeReflexState(stateBus);
+
+  // Symbolic VM
+  const symbolic = computeSymbolicOps(stateBus);
+
+  // Neural flow
+  const neural = computeNeuralFlow(stateBus);
+
+  return {
+    delta,
+
+    // Base engine signals
+    ...base,
+
+    // Metabolic scheduler
+    activeTasks: schedule.active,
+    deferredTasks: schedule.deferred,
+    stress: schedule.stress,
+    efficiency: schedule.efficiency,
+
+    // Entropy
+    branchEntropy: entropy.branch,
+    erasureEntropy: entropy.erasure,
+
+    // Complexity
+    timeSteps: complexity.time,
+    spaceBytes: complexity.space,
+    ioBytes: complexity.io,
+    algoComplexity: complexity.algo,
+
+    // Free energy
+    energyCost: freeEnergy.cost,
+    energyFlow: freeEnergy.flow,
+
+    // Reflex
+    reflexState: reflex.state,
+
+    // Symbolic VM
+    opcodeRate: symbolic.rate,
+    opcodeComplexity: symbolic.complexity,
+
+    // Neural
+    neuralLoad: neural.load,
+    neuralFlow: neural.flow
+  };
 }

@@ -6,7 +6,7 @@
   <title>Renzo’s Cave Cockpit</title>
 
   <!-- Neon Theme -->
-  <link rel="stylesheet" href="neon-theme.css" />
+  <link rel="stylesheet" href="cave-ui/theme/neon-theme.css" />
 
   <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
@@ -112,7 +112,7 @@
   <!-- Organism Runtime + Cockpit UI -->
   <script type="module">
     import { startRuntimeLoop } from "./cave/runtime/runtime-loop.js";
-    import { CaveCockpitUI } from "./cockpit-ui.js";
+    import { CaveCockpitUI } from "./cave-ui/main-ui.js";
 
     const ui = new CaveCockpitUI();
 
