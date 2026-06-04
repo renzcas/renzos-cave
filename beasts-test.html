@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Beast Chamber - Trog#</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #050509; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050509);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 3, 8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    const floorGeo = new THREE.PlaneGeometry(20, 20);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    const fireLight = new THREE.PointLight(0xffaa55, 2, 30);
+    fireLight.position.set(0, 2, 0);
+    fireLight.castShadow = true;
+    scene.add(fireLight);
+
+    const ambient = new THREE.AmbientLight(0x404040, 0.6);
+    scene.add(ambient);
+
+    const trogGeo = new THREE.BoxGeometry(1.5, 2.5, 1.2);
+    const trogMat = new THREE.MeshStandardMaterial({ color: 0x884422, metalness: 0.1, roughness: 0.8 });
+    const trog = new THREE.Mesh(trogGeo, trogMat);
+    trog.position.set(0, 1.25, -2);
+    trog.castShadow = true;
+    scene.add(trog);
+
+    const beasts = [];
+    const beastColors = [0x3366ff, 0xff3333, 0x33ff66, 0xffcc33];
+    const beastPositions = [
+      [-3, 0.75, -1],
+      [3, 0.75, -1],
+      [-2, 0.75, 2],
+      [2, 0.75, 2]
+    ];
+
+    for (let i = 0; i < 4; i++) {
+      const geo = new THREE.SphereGeometry(0.75, 24, 24);
+      const mat = new THREE.MeshStandardMaterial({ color: beastColors[i], emissive: 0x111111 });
+      const beast = new THREE.Mesh(geo, mat);
+      beast.position.set(...beastPositions[i]);
+      beast.castShadow = true;
+      scene.add(beast);
+      beasts.push(beast);
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    window.addEventListener('resize', onResize);
+
+    let t = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      t += 0.01;
+
+      trog.position.y = 1.25 + Math.sin(t * 2) * 0.1;
+      trog.rotation.y = Math.sin(t * 0.5) * 0.3;
+
+      beasts.forEach((b, i) => {
+        b.position.y = 0.75 + Math.sin(t * 2 + i) * 0.15;
+        b.rotation.y += 0.01 + i * 0.005;
+      });
+
+      fireLight.intensity = 1.8 + Math.sin(t * 10) * 0.4;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+function animateBeasts() {
+  beasts.forEach((b, i) => {
+    b.position.x = Math.sin(Date.now() * 0.001 + i) * 3;
+    b.position.z = Math.cos(Date.now() * 0.001 + i) * 3;
+  });
+}
+const trogGeometry = new THREE.BoxGeometry(1, 2, 1);
+const trogMaterial = new THREE.MeshStandardMaterial({ color: 0x884400 });
+const trog = new THREE.Mesh(trogGeometry, trogMaterial);
+trog.position.set(0, 1, 0);
+scene.add(trog);
+
+
+const fireLight = new THREE.PointLight(0xff5500, 2, 10);
+fireLight.position.set(0, 2, 0);
+scene.add(fireLight);
+
+function flickerFire() {
+  fireLight.intensity = 1.5 + Math.sin(Date.now() * 0.02) * 0.5;
+}
+const listener = new THREE.AudioListener();
+camera.add(listener);
+const sound = new THREE.Audio(listener);
+const loader = new THREE.AudioLoader();
+loader.load('assets/fire.mp3', buffer => {
+  sound.setBuffer(buffer);
+  sound.setLoop(true);
+  sound.setVolume(0.5);
+  sound.play();
+});
+
+
+  </script>
+</body>
+</html>

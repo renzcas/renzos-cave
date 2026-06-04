@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Renzo’s Cave — Full 3D World</title>
+  <link rel="stylesheet" href="neon-theme.css" />
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    #cave-room-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- This is where the 3D Cave renders -->
+  <div id="cave-room-container"></div>
+
+  <!-- Load the FULL 4‑Room Cave Engine -->
+  <script type="module" src="./cave-room.js"></script>
+
+</body>
+</html>

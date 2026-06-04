@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renzo’s Cave Cockpit</title>
+
+  <!-- Neon Theme -->
+  <link rel="stylesheet" href="cave-ui/theme/neon-theme.css" />
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #050509;
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    #cockpit-root {
+      height: 45vh;
+      overflow: hidden;
+      border-bottom: 1px solid #222;
+    }
+
+    #cave-room-container {
+      height: 55vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- COCKPIT UI -->
+  <div id="cockpit-root">
+
+    <!-- COMPLEXITY PANEL -->
+    <section id="complexity-panel" class="cockpit-panel">
+      <div class="cockpit-panel-header">
+        <div class="cockpit-panel-title">Complexity Radar</div>
+      </div>
+      <div id="complexity-radar-container">
+        <svg id="complexityRadar" viewBox="0 0 200 200">
+          <polygon id="complexityPolygon" points="100,20 180,100 100,180 20,100" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- GAUGES -->
+    <section id="gauge-panel" class="cockpit-panel">
+      <div class="cockpit-panel-header">
+        <div class="cockpit-panel-title">Metabolic Gauges</div>
+      </div>
+
+      <div class="gauge-row">
+        <div class="gauge-label">Stress</div>
+        <div id="stressBar" class="gauge-bar"><div class="gauge-fill"></div></div>
+      </div>
+
+      <div class="gauge-row">
+        <div class="gauge-label">Efficiency</div>
+        <div id="efficiencyBar" class="gauge-bar"><div class="gauge-fill"></div></div>
+      </div>
+    </section>
+
+    <!-- SCHEDULER -->
+    <section id="scheduler-panel" class="cockpit-panel">
+      <div class="cockpit-panel-header">
+        <div class="cockpit-panel-title">Scheduler</div>
+      </div>
+      <div class="scheduler-lists">
+        <div class="scheduler-list">
+          <div class="scheduler-list-title">Active Tasks</div>
+          <ul id="taskQueue"></ul>
+        </div>
+        <div class="scheduler-list">
+          <div class="scheduler-list-title">Deferred</div>
+          <ul id="deferredTasks"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTROPY -->
+    <section id="entropy-panel" class="cockpit-panel">
+      <div class="cockpit-panel-header">
+        <div class="cockpit-panel-title">Entropy</div>
+      </div>
+
+      <div class="entropy-row">
+        <span class="entropy-label">Branch Entropy</span>
+        <span id="branchEntropy" class="entropy-value">0</span>
+      </div>
+
+      <div class="entropy-row">
+        <span class="entropy-label">Erasure Entropy</span>
+        <span id="erasureEntropy" class="entropy-value">0</span>
+      </div>
+    </section>
+
+    <!-- REFLEX INDICATOR -->
+    <div id="reflexPanel">Idle</div>
+
+  </div>
+
+  <!-- CAVE ROOM BELOW COCKPIT -->
+  <div id="cave-room-container"></div>
+
+  <!-- Organism Runtime + Cockpit UI -->
+  <script type="module">
+    import { startRuntimeLoop } from "./cave/runtime/runtime-loop.js";
+    import { CaveCockpitUI } from "./cave-ui/main-ui.js";
+
+    const ui = new CaveCockpitUI();
+
+    const engine = {
+      collectSignals() {
+        return {
+          timeSteps: performance.now() % 100,
+          spaceBytes: 50,
+          ioBytes: 10,
+          energyCost: 5,
+          algoComplexity: 40,
+          branchEntropy: Math.random(),
+          erasureEntropy: Math.random()
+        };
+      }
+    };
+
+    startRuntimeLoop(engine, ui);
+  </script>
+
+  <!-- CAVE ROOM SCRIPT -->
+  <script type="module" src="cave-room.js"></script>
+
+</body>
+</html>

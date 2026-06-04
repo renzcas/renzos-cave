@@ -1,0 +1,17 @@
+{
+  "InfoEngine": {
+    "url": "/InfoEngine/api",
+    "type": "mind",
+    "status": "active"
+  },
+  "InfoPhyzx": {
+    "url": "/InfoPhyzx/api",
+    "type": "body",
+    "status": "active"
+  },
+  "LLM_Organism": {
+    "url": "/LLM_Organism/api",
+    "type": "narrative",
+    "status": "active"
+  }
+}
