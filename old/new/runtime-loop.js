@@ -1,16 +1,16 @@
 // runtime-loop.js
 // Unified Cave Engine Runtime Loop (HUD + Panels + Engines)
 
-import { stateBus } from "./state-bus.js";
+import { stateBus } from "../../renzos-cave/cave/runtime/state-bus.js";
 
 // Engines
-import { computeMetabolicSchedule } from "../../engine/metabolic-scheduler.js";
+import { computeMetabolicSchedule } from "./engine/metabolic-scheduler.js";
 import { computeBoughEntropy } from "../../engine/bough-engine.js";
-import { computeComplexity } from "../../engine/complexity-tensor-organ.js";
-import { computeFreeEnergy } from "../../engine/free-energy-organ.js";
-import { computeReflexState } from "../../engine/organ-reflex-system.js";
-import { computeSymbolicOps } from "../../engine/symbolic-vm.js";
-import { computeNeuralFlow } from "../../engine/neural-spine.js";
+import { computeComplexity } from "./engine/complexity-tensor-organ.js";
+import { computeFreeEnergy } from "./engine/free-energy-organ.js";
+import { computeReflexState } from "./engine/organ-reflex-system.js";
+import { computeSymbolicOps } from "./engine/symbolic-vm.js";
+import { computeNeuralFlow } from "./engine/neural-spine.js";
 
 // Tick rate
 const TARGET_FPS = 60;
