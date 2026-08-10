@@ -1,0 +1,31 @@
+body {
+    background: #0a0a0f;
+    color: #e0e0ff;
+    font-family: Consolas, monospace;
+    margin: 0;
+    padding: 0;
+}
+
+#cockpit {
+    padding: 20px;
+}
+
+#mode-switcher button {
+    margin: 5px;
+    padding: 10px 20px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+    cursor: pointer;
+}
+
+#mode-switcher button:hover {
+    background: #444;
+}
+
+#panel-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: #111;
+    border: 1px solid #333;
+}
