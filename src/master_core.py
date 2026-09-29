@@ -1,39 +1,27 @@
-class MasterCore:
+class MasterCoreEngine:
     def __init__(self):
         self.subsystems = {}
         self._register()
 
     def _register(self):
-        from InfoPhyzx.core import InfoPhyzxCore
-        from INFOPHYS_PIPELINE.core import InfoPhysPipelineCore
-        from LLM_Organism.core import LLMOrganismCore
-        from BIG_ANIMAL.core import BigAnimalCore
-        from InfoEngine.core import InfoEngineCore
-        from agentdash.core import AgentDashCore
-        from cave.core.EventCascadeCore import EventCascadeCore
-        # add other organs here as needed
-
-        self.subsystems["InfoPhyzx"] = InfoPhyzxCore()
-        self.subsystems["INFOPHYS-PIPELINE"] = InfoPhysPipelineCore()
-        self.subsystems["LLM_Organism"] = LLMOrganismCore()
-        self.subsystems["BIG_ANIMAL"] = BigAnimalCore()
-        self.subsystems["InfoEngine"] = InfoEngineCore()
-        self.subsystems["agentdash"] = AgentDashCore()
-        self.subsystems["EventCascade"] = EventCascadeCore()
+        # Register your organs here as outlined in your architecture
+        pass
 
     def tick(self):
         snapshot = {}
 
-        # 1. Physics
-        phyzx = self.subsystems["InfoPhyzx"]
-        phyzx.update()
-        snapshot["physics"] = phyzx.snapshot()
+        # 1. Build base physics state
+        if "InfoPhyzx" in self.subsystems:
+            phyzx = self.subsystems["InfoPhyzx"]
+            phyzx.update()
+            snapshot["physics"] = phyzx.snapshot()
 
-        # 2. Perception / transform
-        pipeline = self.subsystems["INFOPHYS-PIPELINE"]
-        snapshot["transformed_physics"] = pipeline.process(snapshot["physics"])
+        # 2. Transform raw physics into perception
+        if "INFOPHYS-PIPELINE" in self.subsystems:
+            pipeline = self.subsystems["INFOPHYS-PIPELINE"]
+            snapshot["transformed_physics"] = pipeline.process(snapshot.get("physics", {}))
 
-        # 3. Unified organ lifecycle
+        # 3. Run unified organ lifecycle (pre_tick -> tick -> post_tick)
         for organ in self.subsystems.values():
             if hasattr(organ, "pre_tick"):
                 organ.pre_tick(snapshot)
@@ -46,9 +34,10 @@ class MasterCore:
             if hasattr(organ, "post_tick"):
                 organ.post_tick(snapshot)
 
-        # 4. Cockpit + logging
-        dash = self.subsystems["agentdash"]
-        dash.update(snapshot)
+        # 4. Update cockpit and ingest snapshot
+        if "agentdash" in self.subsystems:
+            self.subsystems["agentdash"].update(snapshot)
+        if "InfoEngine" in self.subsystems:
+            self.subsystems["InfoEngine"].ingest(snapshot)
 
-        info = self.subsystems["InfoEngine"]
-        info.ingest(snapshot)
+        return snapshot
