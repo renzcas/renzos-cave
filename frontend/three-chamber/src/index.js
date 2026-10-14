@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { EngineStream } from './stream/EngineStream.js';
 
 import { WorldScene } from './world/WorldScene.js';
 import { AtmosphereEngine } from './world/AtmosphereEngine.js';
@@ -15,6 +16,11 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0x000000);
 document.body.style.margin = 0;
 document.body.appendChild(renderer.domElement);
+
+const stream = new EngineStream();
+const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const streamUrl = import.meta.env.VITE_ENGINE_WS || `${wsProtocol}//${window.location.hostname}:8001/engine`;
+stream.connect(streamUrl);
 
 // === CaveSharp World Scene ===
 const world = new WorldScene(renderer);
@@ -63,17 +69,18 @@ function animate(now) {
 
   const dt = (now - last) / 1000;
   last = now;
+  const packet = stream.read();
 
   // holographic rotation
   knot.rotation.x += 0.01;
   knot.rotation.y += 0.01;
 
   // subsystem updates
-  atmosphere.update(dt, null);
+  atmosphere.update(dt, packet);
   regionGen.update(null);
   marching.update(regionGen.voxels);
-  portals.update(null);
-  signals.update(dt, null);
+  portals.update(packet);
+  signals.update(dt, packet);
   aura.update(dt, null);
   world.update(null);
 

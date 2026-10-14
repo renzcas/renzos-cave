@@ -28,9 +28,10 @@ export class CaveSignals {
 
   update(dt, packet) {
     this.time += dt;
+    const danger = THREE.MathUtils.clamp(Number(packet?.signals?.danger) || 0, 0, 1);
 
     // decay intensity
-    this.intensity *= 0.92;
+    this.intensity = Math.max(this.intensity * 0.92, danger * 0.6);
 
     // neon pulse
     const pulse = Math.sin(this.time * 8.0) * 0.5 + 0.5;
