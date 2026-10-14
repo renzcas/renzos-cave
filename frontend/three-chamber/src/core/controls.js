@@ -6,6 +6,6 @@ export function createControls(camera, renderer) {
   controls.dampingFactor = 0.05;
   controls.enablePan = false;
   controls.minDistance = 2;
-  controls.maxDistance = 10;
+  controls.maxDistance = 40;
   return controls;
 }

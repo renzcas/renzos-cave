@@ -8,6 +8,6 @@ export function createCamera() {
     200
   );
 
-  camera.position.set(0, 1.5, 4);
+  camera.position.set(0.5, 16, 25);
   return camera;
 }

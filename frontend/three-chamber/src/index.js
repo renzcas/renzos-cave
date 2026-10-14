@@ -6,6 +6,10 @@ import { AtmosphereEngine } from './world/AtmosphereEngine.js';
 import { RegionMeshGenerator } from './world/RegionMeshGenerator.js';
 import { MarchingCubes } from './world/MarchingCubes.js';
 import { PortalSystem } from './world/PortalSystem.js';
+import { VolcanoLake } from './world/VolcanoLake.js';
+import { Labyrinth } from './world/Labyrinth.js';
+import { AlienTransportLayer } from './world/AlienTransportLayer.js';
+import { OperatorAvatar } from './characters/OperatorAvatar.js';
 import { CaveSignals } from './hud/CaveSignals.js';
 import { OperatorAura } from './hud/OperatorAura.js';
 
@@ -24,6 +28,11 @@ stream.connect(streamUrl);
 
 // === CaveSharp World Scene ===
 const world = new WorldScene(renderer);
+const volcanoLake = new VolcanoLake(world);
+volcanoLake.root.position.x = 8.5;
+const labyrinth = new Labyrinth(world);
+const operator = new OperatorAvatar(world, labyrinth.entrancePosition);
+const alienTransport = new AlienTransportLayer(world);
 
 // === Atmosphere (breathing fog + neon pulses) ===
 const atmosphere = new AtmosphereEngine(world);
@@ -37,9 +46,6 @@ const marching = new MarchingCubes(world);
 // === Portal System (neon holographic rings) ===
 const portals = new PortalSystem(world);
 
-// Spawn a test portal
-portals.spawnPortal(new THREE.Vector3(0, 0, -2));
-
 // === CaveSignals (HUD danger pulses) ===
 const signals = new CaveSignals(world);
 
@@ -49,17 +55,11 @@ signals.trigger(1.0);
 // === Operator Aura (neon breathing halo) ===
 const aura = new OperatorAura(world);
 
-// === Test holographic object ===
-const geo = new THREE.TorusKnotGeometry(1, 0.3, 128, 32);
-const mat = new THREE.MeshStandardMaterial({
-  color: 0x6faaff,
-  metalness: 0.8,
-  roughness: 0.2,
-  emissive: 0x1a2a4f,
-  emissiveIntensity: 0.6
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  world.camera.aspect = window.innerWidth / window.innerHeight;
+  world.camera.updateProjectionMatrix();
 });
-const knot = new THREE.Mesh(geo, mat);
-world.scene.add(knot);
 
 // === Animation Loop ===
 let last = performance.now();
@@ -71,11 +71,11 @@ function animate(now) {
   last = now;
   const packet = stream.read();
 
-  // holographic rotation
-  knot.rotation.x += 0.01;
-  knot.rotation.y += 0.01;
-
   // subsystem updates
+  labyrinth.update(dt);
+  operator.update(dt);
+  volcanoLake.update(dt);
+  alienTransport.update(dt, packet);
   atmosphere.update(dt, packet);
   regionGen.update(null);
   marching.update(regionGen.voxels);
