@@ -3,13 +3,14 @@
 import * as THREE from 'three';
 
 import { createWorldViewer, updateWorld } from './worlds/WorldScene.js';
+import { IonChamber } from './worlds/IonChamber.js';
+import { FourPillarTrial } from './trials/FourPillarTrial.js';
 import { OperatorHUD } from './hud/OperatorHUD.js';
 import { StressField } from './hud/StressField.js';
 import { CaveSignals } from './hud/CaveSignals.js';
 import { OperatorAura } from './hud/OperatorAura.js';
 
 import { initEngineStream } from './stream/EngineStream.js';
-import { sendCaveSharpCommand } from './controls/CaveSharpControl.js';
 
 import { applyRegionMeshes } from './worlds/RegionMeshGenerator.js';
 import { PortalField } from './worlds/PortalField.js';
@@ -21,6 +22,7 @@ import './ui/operator.css';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.style.margin = "0";
 document.body.appendChild(renderer.domElement);
 
@@ -35,6 +37,14 @@ camera.position.set(0, 0, 8);
 
 const { scene, controls } = createWorldViewer(renderer, camera);
 
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+const ionChamber = new IonChamber(scene);
+const fourPillarTrial = new FourPillarTrial(scene, ionChamber);
 const hud = new OperatorHUD(camera);
 const stressField = new StressField(scene);
 const portalField = new PortalField(scene);
@@ -63,12 +73,6 @@ initEngineStream((p) => {
   marchingCubes.update(packet?.world?.nodes);
 });
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "1") sendCaveSharpCommand("boost");
-  if (e.key === "2") sendCaveSharpCommand("pulse");
-  if (e.key === "3") sendCaveSharpCommand("stabilize");
-});
-
 let last = performance.now();
 
 function animate() {
@@ -79,6 +83,8 @@ function animate() {
   last = now;
 
   controls.update();
+  ionChamber.update(dt);
+  fourPillarTrial.update(dt);
   hud.update(dt, packet);
   portalField.animate(dt);
   caveSignals.update(dt, packet);

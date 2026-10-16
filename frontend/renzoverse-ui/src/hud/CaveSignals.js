@@ -1,4 +1,4 @@
-// CaveSignals.js — Danger flashes, runes, harmonic warnings
+// CaveSignals.js: danger flashes, runes, and harmonic warnings
 import * as THREE from 'three';
 
 export class CaveSignals {

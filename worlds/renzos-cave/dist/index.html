@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore finite-dimensional Hilbert-space operators in an interactive Three.js cave."
+    />
+    <title>Renzo's Cave — Operator Chamber</title>
+    <script type="module" crossorigin src="/assets/index-DGOivjbI.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-rhZIWdAv.css">
+  </head>
+  <body>
+    <main class="experience">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">RENZO'S CAVE / LEARNING LAB 01</p>
+          <h1>The Operator Chamber</h1>
+          <p class="intro">
+            Change a linear operator. Watch its action reshape the chamber.
+          </p>
+        </div>
+        <div class="space-badge" aria-label="The state space is two-dimensional real space">
+          <span class="badge-dot"></span>
+          State space <strong>R²</strong>
+        </div>
+      </header>
+
+      <section class="lab" aria-label="Interactive operator chamber">
+        <div class="viewport">
+          <div id="chamber" aria-label="Interactive 3D cave scene"></div>
+          <div class="scene-label">
+            <span class="live-dot"></span>
+            <span>LIVE OPERATOR FIELD</span>
+          </div>
+          <div class="scene-caption">
+            <span id="scene-caption">Two aligned projections commute.</span>
+          </div>
+          <div class="loading" id="loading-status" role="status">Building the chamber…</div>
+        </div>
+
+        <aside class="controls">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">OPERATOR WORKBENCH</p>
+              <h2>Shape the state</h2>
+            </div>
+            <span class="operator-symbol" aria-hidden="true">T</span>
+          </div>
+
+          <fieldset class="operator-picker">
+            <legend>Player operator</legend>
+            <div class="operator-options">
+              <button type="button" class="operator-choice" data-kind="rotation" aria-pressed="false">
+                <span class="choice-symbol" aria-hidden="true">↻</span>
+                <span><strong>Rotate</strong><small>Preserves length</small></span>
+              </button>
+              <button type="button" class="operator-choice is-selected" data-kind="projection" aria-pressed="true">
+                <span class="choice-symbol" aria-hidden="true">↘</span>
+                <span><strong>Project</strong><small>Filters a direction</small></span>
+              </button>
+            </div>
+          </fieldset>
+
+          <div class="angle-control">
+            <div class="control-line">
+              <label for="operator-angle">Operator angle</label>
+              <output id="angle-output" for="operator-angle">35°</output>
+            </div>
+            <input id="operator-angle" type="range" min="0" max="180" step="1" value="35" />
+            <div class="range-ends"><span>0°</span><span>90°</span><span>180°</span></div>
+          </div>
+
+          <section class="readouts" aria-label="Operator measurements">
+            <div class="readout">
+              <span class="readout-label">Resonance</span>
+              <strong id="resonance-value">100%</strong>
+              <div class="meter" aria-hidden="true"><span id="resonance-meter"></span></div>
+            </div>
+            <div class="readout">
+              <span class="readout-label">State norm</span>
+              <strong id="norm-value">1.00</strong>
+              <small id="norm-note">Length preserved</small>
+            </div>
+          </section>
+
+          <div class="equation" aria-live="polite">
+            <span class="equation-label">ORDERED TRANSFORM</span>
+            <code id="composition-value">T<sub>room</sub>T<sub>player</sub></code>
+            <span id="commutator-value">‖[T<sub>room</sub>, T<sub>player</sub>]‖ = 0.00</span>
+          </div>
+
+          <p class="lesson" id="lesson-copy">
+            Matching projection axes commute: applying either first gives the same result.
+          </p>
+          <p class="fine-print">
+            This chamber is a visual model of operators on <i>R</i>², a finite-dimensional real
+            Hilbert space. The character art is image-based, not a rigged 3D model.
+          </p>
+        </aside>
+      </section>
+
+      <footer class="hint">
+        <span>Drag to look around</span>
+        <span class="hint-divider" aria-hidden="true"></span>
+        <span>Use the slider to change the operator</span>
+      </footer>
+    </main>
+  </body>
+</html>

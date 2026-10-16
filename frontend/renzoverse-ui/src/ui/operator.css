@@ -9,32 +9,6 @@
   border-radius: 6px;
   font-family: monospace;
   color: #00ffff;
-}
-
-.op-btn {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 8px;
-  background: rgba(0, 255, 255, 0.2);
-  border: 1px solid #00ffff;
-  color: #00ffff;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.op-btn:hover {
-  background: rgba(0, 255, 255, 0.35);
-}
-
-.op-slider-wrap {
-  margin-top: 10px;
-}
-
-.op-slider-label {
+  line-height: 1.5;
   font-size: 12px;
-  margin-bottom: 4px;
-}
-
-.op-slider {
-  width: 100%;
 }
