@@ -3,10 +3,69 @@ import asyncio
 import json
 import random
 import httpx
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import uvicorn
 
 app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"status": "ok", "websocket": "/ws"}
+
+
+cockpit_state = {
+    "cycle": 0,
+    "stress": 0.45,
+    "efficiency": 0.82,
+    "branchEntropy": 0.12,
+    "erasureEntropy": 0.04,
+    "timeSteps": 32,
+    "spaceBytes": 50,
+    "ioBytes": 10,
+    "algoComplexity": 40,
+    "activeTasks": [{"label": "Ready"}],
+    "deferredTasks": []
+}
+
+
+def get_cockpit_telemetry():
+    return {
+        **cockpit_state,
+        "activeTasks": [dict(task) for task in cockpit_state["activeTasks"]],
+        "deferredTasks": [dict(task) for task in cockpit_state["deferredTasks"]]
+    }
+
+
+def execute_cockpit_cycle():
+    cockpit_state["cycle"] += 1
+    cycle = cockpit_state["cycle"]
+    cockpit_state["stress"] = min(1, cockpit_state["stress"] + 0.1)
+    cockpit_state["efficiency"] = max(0, cockpit_state["efficiency"] - 0.05)
+    cockpit_state["branchEntropy"] = min(1, cockpit_state["branchEntropy"] + 0.125)
+    cockpit_state["erasureEntropy"] = min(1, cockpit_state["erasureEntropy"] + 0.025)
+    cockpit_state["timeSteps"] = min(100, cockpit_state["timeSteps"] + 7)
+    cockpit_state["ioBytes"] = min(100, cockpit_state["ioBytes"] + 10)
+    cockpit_state["algoComplexity"] = min(100, cockpit_state["algoComplexity"] + 5)
+    cockpit_state["activeTasks"] = [{"label": f"Cycle {cycle}: node mutation complete"}]
+
+
+@app.websocket("/ws")
+async def cockpit_websocket(ws: WebSocket):
+    await ws.accept()
+    await ws.send_json({"type": "TELEMETRY", "state": get_cockpit_telemetry()})
+
+    try:
+        while True:
+            message = await ws.receive_json()
+            if not isinstance(message, dict) or message.get("action") != "EXECUTE_CYCLE":
+                await ws.send_json({"type": "ERROR", "message": "Unsupported action"})
+                continue
+
+            execute_cockpit_cycle()
+            await ws.send_json({"type": "TELEMETRY", "state": get_cockpit_telemetry()})
+    except WebSocketDisconnect:
+        pass
 
 # ---------------------------------------------------------
 # C# CaveSharp Engine Bridge

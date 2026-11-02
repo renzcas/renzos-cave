@@ -95,9 +95,42 @@ body {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 6px;
+}
+
+.cockpit-action {
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 5px 9px;
+  background: rgba(58, 242, 255, 0.08);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.cockpit-action:hover,
+.cockpit-action:focus-visible {
+  background: rgba(58, 242, 255, 0.2);
+  outline: 2px solid transparent;
+  box-shadow: 0 0 10px rgba(58, 242, 255, 0.35);
+}
+
+.cockpit-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.engine-connection {
+  color: var(--text-soft);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.engine-connection[data-connected="true"] {
+  color: var(--ok);
 }
 
 .cockpit-panel-title {

@@ -21,15 +21,6 @@ export class CaveCockpitUI {
     this.taskQueueEl = document.getElementById("taskQueue");
     this.deferredEl = document.getElementById("deferredTasks");
 
-    // Smoothing state
-    this.smooth = {
-      stress: 0,
-      eff: 0,
-      t: 0,
-      s: 0,
-      io: 0,
-      algo: 0
-    };
   }
 
   update(signals) {
@@ -48,11 +39,8 @@ export class CaveCockpitUI {
     const stress = clamp01(s.stress ?? s.energyCost / 100 ?? 0.3);
     const eff = clamp01(s.efficiency ?? 1 - (s.algoComplexity ?? 40) / 100);
 
-    this.smooth.stress = lerp(this.smooth.stress, stress, 0.15);
-    this.smooth.eff = lerp(this.smooth.eff, eff, 0.15);
-
-    this.stressFill.style.width = `${this.smooth.stress * 100}%`;
-    this.effFill.style.width = `${this.smooth.eff * 100}%`;
+    this.stressFill.style.width = `${stress * 100}%`;
+    this.effFill.style.width = `${eff * 100}%`;
   }
 
   // ---------------- RADAR ----------------
@@ -63,17 +51,12 @@ export class CaveCockpitUI {
     const io = normalize(s.ioBytes ?? 0, 0, 100);
     const algo = normalize(s.algoComplexity ?? 0, 0, 100);
 
-    this.smooth.t = lerp(this.smooth.t, t, 0.15);
-    this.smooth.s = lerp(this.smooth.s, sp, 0.15);
-    this.smooth.io = lerp(this.smooth.io, io, 0.15);
-    this.smooth.algo = lerp(this.smooth.algo, algo, 0.15);
-
     const cx = 100, cy = 100, r = 80;
 
-    const top = point(cx, cy, -Math.PI/2, r * this.smooth.t);
-    const right = point(cx, cy, 0, r * this.smooth.s);
-    const bottom = point(cx, cy, Math.PI/2, r * this.smooth.io);
-    const left = point(cx, cy, Math.PI, r * this.smooth.algo);
+    const top = point(cx, cy, -Math.PI/2, r * t);
+    const right = point(cx, cy, 0, r * sp);
+    const bottom = point(cx, cy, Math.PI/2, r * io);
+    const left = point(cx, cy, Math.PI, r * algo);
 
     this.radarPolygon.setAttribute(
       "points",
@@ -127,7 +110,6 @@ export class CaveCockpitUI {
 // ---------------- HELPERS ----------------
 
 function clamp01(v) { return Math.max(0, Math.min(1, v)); }
-function lerp(a,b,t) { return a + (b-a)*t; }
 function normalize(v,min,max){ return clamp01((v-min)/(max-min)); }
 
 function point(cx,cy,angle,r){

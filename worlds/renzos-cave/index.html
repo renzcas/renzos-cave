@@ -42,6 +42,8 @@
     <section id="complexity-panel" class="cockpit-panel">
       <div class="cockpit-panel-header">
         <div class="cockpit-panel-title">Complexity Radar</div>
+        <span id="engine-connection" class="engine-connection" role="status">Connecting...</span>
+        <button id="execute-cycle" class="cockpit-action" type="button" disabled>Execute Cycle</button>
       </div>
       <div id="complexity-radar-container">
         <svg id="complexityRadar" viewBox="0 0 200 200">
@@ -111,26 +113,62 @@
 
   <!-- Organism Runtime + Cockpit UI -->
   <script type="module">
-    import { startRuntimeLoop } from "./cave/runtime/runtime-loop.js";
     import { CaveCockpitUI } from "./cockpit-ui.js";
+    import { simulationState } from "./cave/runtime/simulation-state.js";
 
     const ui = new CaveCockpitUI();
+    const executeButton = document.getElementById("execute-cycle");
+    const connectionStatus = document.getElementById("engine-connection");
 
-    const engine = {
-      collectSignals() {
-        return {
-          timeSteps: performance.now() % 100,
-          spaceBytes: 50,
-          ioBytes: 10,
-          energyCost: 5,
-          algoComplexity: 40,
-          branchEntropy: Math.random(),
-          erasureEntropy: Math.random()
-        };
+    simulationState.subscribe(signals => ui.update(signals));
+
+    function getWebSocketUrl() {
+      if (import.meta.env.VITE_ENGINE_WS_URL) return import.meta.env.VITE_ENGINE_WS_URL;
+
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const hostname = window.location.hostname;
+      if (hostname.endsWith(".app.github.dev")) {
+        const backendHost = hostname.replace(/-\d+\.app\.github\.dev$/, "-8001.app.github.dev");
+        return `${protocol}//${backendHost}/ws`;
       }
-    };
 
-    startRuntimeLoop(engine, ui);
+      return `${protocol}//${hostname}:8001/ws`;
+    }
+
+    const socket = new WebSocket(getWebSocketUrl());
+
+    socket.addEventListener("open", () => {
+      executeButton.disabled = false;
+      connectionStatus.textContent = "Engine connected";
+      connectionStatus.dataset.connected = "true";
+    });
+
+    socket.addEventListener("message", event => {
+      const message = JSON.parse(event.data);
+      if (message.type === "TELEMETRY") {
+        simulationState.update(message.state);
+      } else if (message.type === "ERROR") {
+        connectionStatus.textContent = message.message;
+      }
+    });
+
+    socket.addEventListener("close", () => {
+      executeButton.disabled = true;
+      connectionStatus.textContent = "Engine disconnected";
+      connectionStatus.dataset.connected = "false";
+    });
+
+    socket.addEventListener("error", () => {
+      executeButton.disabled = true;
+      connectionStatus.textContent = "Engine unavailable";
+      connectionStatus.dataset.connected = "false";
+    });
+
+    executeButton.addEventListener("click", () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ action: "EXECUTE_CYCLE" }));
+      }
+    });
   </script>
 
   <!-- CAVE ROOM SCRIPT -->
