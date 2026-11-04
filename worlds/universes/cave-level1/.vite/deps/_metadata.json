@@ -1,0 +1,15 @@
+{
+  "hash": "38988745",
+  "configHash": "77928d4e",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "021be69c",
+  "optimized": {
+    "three": {
+      "src": "../../../../renzos-cave/node_modules/three/build/three.module.js",
+      "file": "three.js",
+      "fileHash": "5d27b508",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}
