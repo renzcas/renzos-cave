@@ -1,21 +1,21 @@
-import { GridBus } from "../core/event_bus.js";
+import { GRID_EVENTS, GridBus } from "../core/event_bus.js";
 
 export function wireCaveEvents(CaveWorld) {
   CaveWorld.onCreatureUpdate((creature) => {
-    GridBus.emit("CREATURE_STATE_UPDATE", {
-      from: `creature:${creature.id}`,
-      realm: "cave",
-      payload: creature.getState(),
-      ts: Date.now()
-    });
+    GridBus.publish(
+      GRID_EVENTS.CREATURE_STATE_UPDATE,
+      creature.getState(),
+      `creature:${creature.id}`,
+      { realm: "cave" }
+    );
   });
 
   CaveWorld.onLabyrinthGenerated((lab) => {
-    GridBus.emit("LABYRINTH_GENERATED", {
-      from: "cave:worldgen",
-      realm: "cave",
-      payload: lab,
-      ts: Date.now()
-    });
+    GridBus.publish(
+      GRID_EVENTS.LABYRINTH_GENERATED,
+      lab,
+      "cave:worldgen",
+      { realm: "cave" }
+    );
   });
 }

@@ -47,7 +47,7 @@ export async function startGRID() {
   // 5. LINK COCKPIT
   console.log("[04] RAISING AGENTDASH COCKPIT");
   AgentDash.init(GridBus, AgentRegistry);
-  initGridHUD();
+  initGridHUD(AgentDash);
 
   // 6. REGISTER AGENTS
   console.log("[05] REGISTERING AGENTS");
