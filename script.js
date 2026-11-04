@@ -26,14 +26,81 @@ let caveOS;
 let minimap;
 let energyLines;
 let operatorHUD;
+let caveWorld;
 
 let t = 0;
+
+class CaveWorldEngine {
+    constructor() {
+        this.tiers = [
+            "Mountain Entrance",
+            "Cave Level 1: Shadow Shallows",
+            "Cave Level 2: Resonance Chambers",
+            "Cave Level 3: Deep Abysm",
+            "Volcano Lake (Endgame)"
+        ];
+        this.tierIndex = 0;
+        this.status = document.createElement("div");
+        this.status.setAttribute("role", "status");
+        this.status.setAttribute("aria-live", "polite");
+        Object.assign(this.status.style, {
+            position: "fixed",
+            left: "20px",
+            bottom: "20px",
+            zIndex: "20",
+            padding: "12px",
+            color: "#b8f7ff",
+            background: "rgba(0, 0, 0, 0.75)",
+            border: "1px solid #00e0ff",
+            borderRadius: "8px",
+            font: "14px monospace"
+        });
+        document.body.appendChild(this.status);
+        this.renderStatus();
+
+        this.onKeyDown = event => {
+            if (event.key.toLowerCase() === "e" && !event.repeat) this.advanceTier();
+        };
+        window.addEventListener("keydown", this.onKeyDown);
+    }
+
+    getPrototypeTelemetry() {
+        // Illustrative progression values, not measurements from Cave Physics.
+        return {
+            gravity: 9.81 * (1 + this.tierIndex * 0.15),
+            observerDensity: 0.85 - this.tierIndex * 0.05,
+            resonanceFrequency: 432 + this.tierIndex * 50
+        };
+    }
+
+    advanceTier() {
+        if (this.tierIndex === this.tiers.length - 1) {
+            this.status.textContent = "Volcano Lake reached. Restart the page to descend again.";
+            return;
+        }
+
+        this.tierIndex++;
+        const telemetry = this.getPrototypeTelemetry();
+        console.info(`[Cave Engine] Advanced to: ${this.tiers[this.tierIndex]}`);
+        console.info(
+            `[Prototype estimates] Gravity: ${telemetry.gravity.toFixed(2)} | ` +
+            `Resonance: ${telemetry.resonanceFrequency} Hz`
+        );
+        this.renderStatus();
+    }
+
+    renderStatus() {
+        this.status.textContent =
+            `BIG_ANIMAL | ${this.tiers[this.tierIndex]} | Press E to descend`;
+    }
+}
 
 // ----------------------
 // Init
 // ----------------------
 initScene();
 createCave();
+caveWorld = new CaveWorldEngine();
 
 chamber = new Chamber(scene);
 dynasty = new OperatorDynasty();
@@ -247,7 +314,8 @@ function animate() {
     if (!scene.fog) {
         scene.fog = new THREE.FogExp2(0x050308, 0.08);
     }
-    scene.fog.density = 0.07 + Math.sin(t * 0.5) * 0.015;
+    const observerDensity = caveWorld.getPrototypeTelemetry().observerDensity;
+    scene.fog.density = 0.07 + (0.85 - observerDensity) * 0.04 + Math.sin(t * 0.5) * 0.015;
 
     // Portal breathing
     if (scene.portal) {
